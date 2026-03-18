@@ -1,14 +1,5 @@
 [
   {
-    "name": "doe sangue",
-    "type": "image",
-    "url": "https://blog.trasmontano.com.br/wp-content/uploads/2021/05/Banner_1000x485.png",
-    "duration": "00:00:30",
-    "startDate": "",
-    "endDate": "",
-    "active": true
-  },
-  {
     "name": "doc_saude",
     "type": "image",
     "url": "https://drive.google.com/file/d/1FgeoejLnVPkJRQ9nRB_Fk2x6y_3Esb6N/view?usp=sharing",
