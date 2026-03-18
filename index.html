@@ -26,12 +26,29 @@ img, video, iframe {
     object-fit: contain;
     background: black;
 }
+
+#clock {
+    position: fixed;
+    bottom: 30px;
+    right: 30px;
+    color: white;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    font-size: 40px;
+    font-weight: bold;
+    background-color: rgba(0, 0, 0, 0.6);
+    padding: 10px 20px;
+    border-radius: 12px;
+    z-index: 9999;
+    text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.8);
+    pointer-events: none; /* Garante que o relógio não bloqueie cliques em vídeos */
+}
 </style>
 </head>
 
 <body>
 
 <div id="player"></div>
+<div id="clock"></div>
 
 <script>
 
@@ -247,6 +264,14 @@ function next() {
     current = (current + 1) % playlist.length;
     show(playlist[current]);
 }
+
+// 🕒 Relógio na tela
+function updateClock() {
+    const now = new Date();
+    document.getElementById("clock").innerText = now.toLocaleTimeString("pt-BR");
+}
+setInterval(updateClock, 1000);
+updateClock(); // Inicia imediatamente para não ficar em branco no primeiro segundo
 
 //  Inicialização
 async function startApp() {
