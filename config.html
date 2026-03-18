@@ -1,318 +1,382 @@
 <!DOCTYPE html>
 <html lang="pt-br">
 <head>
-<meta charset="UTF-8">
-<title>Configuração da TV Corporativa</title>
-<style>
-    body {
-        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-        background-color: #f4f6f8;
-        margin: 0;
-        padding: 20px;
-        color: #333;
-    }
-    .container {
-        max-width: 900px;
-        margin: 0 auto;
-        background: white;
-        padding: 20px 30px;
-        border-radius: 8px;
-        box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-    }
-    h1, h2 { color: #2c3e50; }
-    .form-group {
-        margin-bottom: 15px;
-    }
-    label {
-        display: block;
-        font-weight: bold;
-        margin-bottom: 5px;
-    }
-    input[type="text"], select {
-        width: 100%;
-        padding: 8px;
-        box-sizing: border-box;
-        border: 1px solid #ccc;
-        border-radius: 4px;
-    }
-    .github-setup {
-        background-color: #e8f4fd;
-        padding: 15px;
-        border-radius: 6px;
-        margin-bottom: 20px;
-        border-left: 5px solid #2196F3;
-    }
-    .playlist-item {
-        background: #fafafa;
-        border: 1px solid #ddd;
-        padding: 15px;
-        margin-bottom: 15px;
-        border-radius: 6px;
-        position: relative;
-    }
-    .item-grid {
-        display: grid;
-        grid-template-columns: 1fr 1fr;
-        gap: 10px;
-    }
-    .full-width { grid-column: span 2; }
-    button {
-        background-color: #4CAF50;
-        color: white;
-        border: none;
-        padding: 10px 15px;
-        cursor: pointer;
-        border-radius: 4px;
-        font-weight: bold;
-    }
-    button:hover { background-color: #45a049; }
-    .btn-danger { background-color: #f44336; }
-    .btn-danger:hover { background-color: #da190b; }
-    .btn-remove {
-        position: absolute;
-        top: 15px;
-        right: 15px;
-    }
-    .header-actions {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        margin-bottom: 20px;
-    }
-    #status {
-        margin-top: 15px;
-        font-weight: bold;
-    }
-    .success { color: green; }
-    .error { color: red; }
-</style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TV Corporativa · Painel de Controle</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap" rel="stylesheet">
+    <style>
+        * { font-family: 'Inter', system-ui, sans-serif; }
+        .transition-smooth { transition: all 0.2s ease; }
+        .playlist-item-enter { animation: slideIn 0.3s ease; }
+        @keyframes slideIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to   { opacity: 1; transform: translateY(0); }
+        }
+    </style>
 </head>
-<body>
+<body class="bg-gradient-to-br from-slate-50 to-slate-100 min-h-screen p-4 md:p-8">
 
-<div class="container">
-    <h1>⚙️ Painel de Controle - TV Corporativa</h1>
-
-    <div class="github-setup">
-        <h2>Conexão com GitHub</h2>
-        <p><small>Esses dados ficam salvos apenas no seu navegador local para enviar atualizações.</small></p>
-        <div class="item-grid">
-            <div class="form-group">
-                <label>Dono do Repositório (Seu Usuário):</label>
-                <input type="text" id="gh-owner" placeholder="Ex: jacson834">
-            </div>
-            <div class="form-group">
-                <label>Nome do Repositório:</label>
-                <input type="text" id="gh-repo" placeholder="Ex: tv-corporativa">
-            </div>
-            <div class="form-group full-width">
-                <label>GitHub Token (PAT):</label>
-                <input type="text" id="gh-token" placeholder="ghp_xxxxxxxxxxxxxxx">
-            </div>
+<!-- ═══════════════════════════════════════════════════
+     TELA DE LOGIN
+═══════════════════════════════════════════════════ -->
+<div id="login-screen" class="flex items-center justify-center min-h-screen">
+    <div class="bg-white rounded-2xl shadow-xl border border-slate-200 p-10 w-full max-w-sm text-center">
+        <div class="flex justify-center mb-4">
+            <span class="bg-indigo-100 text-indigo-600 p-4 rounded-2xl text-4xl">🔒</span>
         </div>
-        <button onclick="loadFromGitHub()">⬇️ Carregar Playlist do GitHub</button>
-        <span id="load-status"></span>
-    </div>
+        <h2 class="text-2xl font-semibold text-slate-800 mb-1">Acesso Restrito</h2>
+        <p class="text-slate-500 text-sm mb-6">Digite a senha para acessar o painel de configuração da TV.</p>
 
-    <div class="header-actions">
-        <h2>Mídias da Playlist</h2>
-        <button onclick="addEmptyItem()">➕ Adicionar Nova Mídia</button>
-    </div>
+        <input type="password" id="admin-password" placeholder="Senha"
+               class="w-full px-4 py-3 border border-slate-200 rounded-xl bg-slate-50 focus:bg-white focus:ring-2 focus:ring-indigo-200 focus:border-indigo-400 transition-smooth text-center mb-4"
+               onkeydown="if(event.key==='Enter') checkPassword()">
 
-    <div id="playlist-container">
-        <!-- Itens serão renderizados aqui -->
-    </div>
+        <button onclick="checkPassword()"
+                class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-semibold px-6 py-3 rounded-xl transition-smooth">
+            Entrar no Painel
+        </button>
 
-    <hr>
-    <button style="background-color: #2196F3; font-size: 18px; width: 100%; padding: 15px;" onclick="saveToGitHub()">🚀 Salvar Alterações no GitHub</button>
-    <div id="status"></div>
+        <p id="login-error" class="text-rose-500 text-sm mt-4 hidden">Senha incorreta!</p>
+    </div>
 </div>
 
+<!-- ═══════════════════════════════════════════════════
+     DASHBOARD PRINCIPAL
+═══════════════════════════════════════════════════ -->
+<div id="dashboard" class="max-w-5xl mx-auto hidden">
+
+    <!-- Cabeçalho -->
+    <div class="mb-8 flex items-center justify-between bg-white/70 backdrop-blur-sm p-4 rounded-2xl shadow-sm border border-slate-200/60">
+        <div class="flex items-center gap-3">
+            <span class="text-3xl">📺</span>
+            <h1 class="text-2xl md:text-3xl font-semibold text-slate-800 tracking-tight">Painel da TV Corporativa</h1>
+            <span class="bg-indigo-50 text-indigo-700 text-xs font-medium px-3 py-1 rounded-full border border-indigo-200">beta</span>
+        </div>
+        <div class="flex items-center gap-3">
+            <span class="hidden md:block text-sm text-slate-500">⚡ edição em tempo real</span>
+            <button onclick="logout()"
+                    class="text-xs text-slate-500 hover:text-rose-600 bg-slate-100 hover:bg-rose-50 border border-slate-200 hover:border-rose-200 px-3 py-1.5 rounded-lg transition-smooth">
+                🚪 Sair
+            </button>
+        </div>
+    </div>
+
+    <!-- Card Conexão GitHub -->
+    <div class="bg-white rounded-2xl shadow-lg border border-slate-200 mb-8 overflow-hidden transition-smooth hover:shadow-xl">
+        <div class="bg-gradient-to-r from-indigo-600 to-indigo-500 px-6 py-4">
+            <div class="flex items-center gap-3">
+                <div class="bg-white/20 p-2 rounded-xl backdrop-blur-sm">
+                    <svg class="w-5 h-5 text-white" fill="currentColor" viewBox="0 0 24 24">
+                        <path d="M12 2C6.477 2 2 6.477 2 12c0 4.42 2.865 8.166 6.839 9.489.5.092.682-.217.682-.482
+                                 0-.237-.008-.866-.013-1.7-2.782.603-3.369-1.34-3.369-1.34-.454-1.156-1.11-1.463-1.11-1.463
+                                 -.908-.62.069-.608.069-.608 1.003.07 1.531 1.03 1.531 1.03.892 1.529 2.341 1.087 2.91.832
+                                 .092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.11-4.555-4.943 0-1.091.39-1.984 1.03-2.682
+                                 -.103-.253-.447-1.27.098-2.646 0 0 .84-.269 2.75 1.025.8-.223 1.65-.334 2.5-.334
+                                 .85 0 1.7.111 2.5.334 1.91-1.294 2.75-1.025 2.75-1.025.545 1.376.201 2.393.099 2.646
+                                 .64.698 1.03 1.591 1.03 2.682 0 3.841-2.337 4.687-4.565 4.935.359.309.678.919.678 1.852
+                                 0 1.336-.012 2.415-.012 2.743 0 .267.18.578.688.48C19.138 20.161 22 16.418 22 12
+                                 c0-5.523-4.477-10-10-10z"/>
+                    </svg>
+                </div>
+                <h2 class="text-xl font-semibold text-white tracking-tight">Conexão com GitHub</h2>
+                <p class="text-indigo-100 text-sm ml-auto hidden sm:block">dados salvos localmente</p>
+            </div>
+        </div>
+        <div class="p-6">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+                <div>
+                    <label class="block text-sm font-medium text-slate-600 mb-1.5">Dono do Repositório</label>
+                    <div class="relative">
+                        <span class="absolute inset-y-0 left-0 pl-3 flex items-center text-slate-400">@</span>
+                        <input type="text" id="gh-owner" placeholder="ex: jacson834"
+                               class="w-full pl-8 pr-4 py-3 border border-slate-200 rounded-xl bg-slate-50 focus:bg-white focus:ring-2 focus:ring-indigo-200 focus:border-indigo-400 transition-smooth">
+                    </div>
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-slate-600 mb-1.5">Nome do Repositório</label>
+                    <input type="text" id="gh-repo" placeholder="ex: tv-corporativa"
+                           class="w-full px-4 py-3 border border-slate-200 rounded-xl bg-slate-50 focus:bg-white focus:ring-2 focus:ring-indigo-200 focus:border-indigo-400 transition-smooth">
+                </div>
+                <div class="md:col-span-2">
+                    <label class="block text-sm font-medium text-slate-600 mb-1.5">GitHub Token (PAT)</label>
+                    <input type="text" id="gh-token" placeholder="ghp_xxxxxxxxxxxxxxxxxxxx"
+                           class="w-full px-4 py-3 border border-slate-200 rounded-xl bg-slate-50 font-mono text-sm focus:bg-white focus:ring-2 focus:ring-indigo-200 focus:border-indigo-400 transition-smooth">
+                </div>
+            </div>
+            <div class="flex items-center gap-3 flex-wrap">
+                <button onclick="loadFromGitHub()"
+                        class="inline-flex items-center gap-2 bg-indigo-50 hover:bg-indigo-100 text-indigo-700 font-medium px-5 py-2.5 rounded-xl border border-indigo-200 transition-smooth">
+                    ⬇️ Carregar Playlist
+                </button>
+                <span id="load-status" class="text-sm"></span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Barra de ações -->
+    <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mb-6">
+        <h2 class="text-xl font-semibold text-slate-700 flex items-center gap-2">
+            <span class="bg-indigo-100 text-indigo-700 p-1.5 rounded-lg">📋</span>
+            Mídias da Playlist
+            <span class="bg-slate-200 text-slate-600 text-sm px-2.5 py-0.5 rounded-full ml-2 font-mono" id="item-count">0</span>
+        </h2>
+        <button onclick="addEmptyItem()"
+                class="inline-flex items-center gap-2 bg-indigo-600 hover:bg-indigo-700 text-white px-5 py-2.5 rounded-xl shadow-sm shadow-indigo-200 transition-smooth font-medium">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
+            </svg>
+            Nova Mídia
+        </button>
+    </div>
+
+    <!-- Container da Playlist -->
+    <div id="playlist-container" class="space-y-5 mb-8"></div>
+
+    <!-- Botão salvar -->
+    <div class="sticky bottom-6 z-10 flex justify-center">
+        <button onclick="saveToGitHub()"
+                class="group bg-gradient-to-r from-emerald-600 to-emerald-500 hover:from-emerald-700 hover:to-emerald-600 text-white font-semibold px-8 py-4 rounded-2xl shadow-xl shadow-emerald-200/50 transition-all hover:scale-105 active:scale-95 flex items-center gap-3 text-lg">
+            <span class="text-2xl group-hover:rotate-12 transition-transform">🚀</span>
+            Salvar Alterações no GitHub
+        </button>
+    </div>
+
+    <!-- Status global -->
+    <div id="status" class="mt-4 text-center font-medium"></div>
+
+</div><!-- /dashboard -->
+
 <script>
-    let fileSha = ""; // Guarda o código da versão atual do arquivo no GitHub
+    // ─── SENHA ────────────────────────────────────────────
+    const APP_PASSWORD = "tvcorporativa";
+
+    let fileSha = "";
     let playlistData = [];
 
-    // Carrega dados salvos do navegador
+    // ─── INIT ─────────────────────────────────────────────
+    // Preenche campos do GitHub a partir do localStorage
     document.getElementById('gh-owner').value = localStorage.getItem('ghOwner') || "";
-    document.getElementById('gh-repo').value = localStorage.getItem('ghRepo') || "";
+    document.getElementById('gh-repo').value  = localStorage.getItem('ghRepo')  || "";
     document.getElementById('gh-token').value = localStorage.getItem('ghToken') || "";
 
-    // Funções para lidar com Base64 com acentuação (UTF-8)
-    function utf8_to_b64(str) {
-        return window.btoa(unescape(encodeURIComponent(str)));
-    }
-    function b64_to_utf8(str) {
-        return decodeURIComponent(escape(window.atob(str)));
+    // Mantém usuário logado enquanto a aba estiver aberta
+    if (sessionStorage.getItem('dashboardAuth') === 'true') {
+        showDashboard();
+        attemptAutoLoad();
     }
 
-    // 1️⃣ LER DO GITHUB
+    // ─── LOGIN ────────────────────────────────────────────
+    function checkPassword() {
+        if (document.getElementById('admin-password').value === APP_PASSWORD) {
+            sessionStorage.setItem('dashboardAuth', 'true');
+            showDashboard();
+            attemptAutoLoad();
+        } else {
+            document.getElementById('login-error').classList.remove('hidden');
+        }
+    }
+
+    function showDashboard() {
+        document.getElementById('login-screen').classList.add('hidden');
+        document.getElementById('dashboard').classList.remove('hidden');
+    }
+
+    function logout() {
+        sessionStorage.removeItem('dashboardAuth');
+        location.reload();
+    }
+
+    function attemptAutoLoad() {
+        if (document.getElementById('gh-owner').value && document.getElementById('gh-repo').value) {
+            loadFromGitHub();
+        }
+    }
+
+    // ─── UTILIDADES BASE64 / UTF-8 ────────────────────────
+    function utf8_to_b64(str) { return window.btoa(unescape(encodeURIComponent(str))); }
+    function b64_to_utf8(str) { return decodeURIComponent(escape(window.atob(str))); }
+
+    // ─── CONTADOR ─────────────────────────────────────────
+    function updateItemCount() {
+        const el = document.getElementById('item-count');
+        if (el) el.innerText = playlistData.length;
+    }
+
+    // ─── 1. CARREGAR DO GITHUB ────────────────────────────
     async function loadFromGitHub() {
-        const owner = document.getElementById('gh-owner').value.trim();
-        const repo = document.getElementById('gh-repo').value.trim();
-        const token = document.getElementById('gh-token').value.trim();
+        const owner    = document.getElementById('gh-owner').value.trim();
+        const repo     = document.getElementById('gh-repo').value.trim();
+        const token    = document.getElementById('gh-token').value.trim();
         const statusEl = document.getElementById('load-status');
 
-        if (!owner || !repo) {
-            alert("Preencha Usuário e Repositório!");
-            return;
-        }
+        if (!owner || !repo) { alert("Preencha Usuário e Repositório!"); return; }
 
-        // Salva localmente para facilitar nas próximas vezes
         localStorage.setItem('ghOwner', owner);
-        localStorage.setItem('ghRepo', repo);
+        localStorage.setItem('ghRepo',  repo);
         localStorage.setItem('ghToken', token);
 
-        statusEl.innerHTML = "Carregando...";
-        statusEl.className = "";
+        statusEl.innerHTML  = "⏳ Carregando...";
+        statusEl.className  = "text-slate-500 text-sm";
 
         const url = `https://api.github.com/repos/${owner}/${repo}/contents/playlist.json`;
 
         try {
             const headers = { 'Accept': 'application/vnd.github.v3+json' };
-            if (token) headers['Authorization'] = `token ${token}`; // Token ajuda a evitar limite de requisições, e lê repos privados
+            if (token) headers['Authorization'] = `token ${token}`;
 
             const res = await fetch(url, { headers });
             if (!res.ok) throw new Error("Falha ao buscar arquivo. Verifique se o repositório existe.");
-            
-            const data = await res.json();
-            fileSha = data.sha; // Precisamos do SHA para poder atualizar o arquivo depois
-            
-            const jsonString = b64_to_utf8(data.content);
-            playlistData = JSON.parse(jsonString);
-            
+
+            const data  = await res.json();
+            fileSha     = data.sha;
+
+            playlistData = JSON.parse(b64_to_utf8(data.content));
             renderPlaylist();
+
             statusEl.innerHTML = "✅ Playlist carregada com sucesso!";
-            statusEl.className = "success";
+            statusEl.className = "text-emerald-600 font-medium text-sm";
         } catch (err) {
             console.error(err);
-            statusEl.innerHTML = "❌ Erro ao carregar: " + err.message;
-            statusEl.className = "error";
+            statusEl.innerHTML = "❌ Erro: " + err.message;
+            statusEl.className = "text-rose-600 font-medium text-sm";
         }
     }
 
-    // 2️⃣ RENDERIZAR NA TELA
+    // ─── 2. RENDERIZAR PLAYLIST ───────────────────────────
     function renderPlaylist() {
         const container = document.getElementById('playlist-container');
         container.innerHTML = "";
 
         if (playlistData.length === 0) {
-            container.innerHTML = "<p>A playlist está vazia.</p>";
+            container.innerHTML = `
+                <div class="text-center py-16 text-slate-400">
+                    <div class="text-5xl mb-3">📭</div>
+                    <p class="text-lg font-medium">A playlist está vazia.</p>
+                    <p class="text-sm mt-1">Adicione uma nova mídia ou carregue do GitHub.</p>
+                </div>`;
+            updateItemCount();
             return;
         }
 
         playlistData.forEach((item, index) => {
             const div = document.createElement('div');
-            div.className = "playlist-item";
+            div.className = "bg-white rounded-2xl border border-slate-200 p-5 relative playlist-item-enter transition-smooth hover:border-indigo-200 hover:shadow-md";
             div.innerHTML = `
-                <button class="btn-danger btn-remove" onclick="removeItem(${index})">🗑️ Remover</button>
-                <h3>Item #${index + 1}</h3>
-                <div class="item-grid">
-                    <div class="form-group">
-                        <label>Nome:</label>
-                        <input type="text" id="name-${index}" value="${item.name || ''}" oninput="updateData(${index}, 'name', this.value)">
+                <div class="absolute right-4 top-4 flex gap-2 items-center">
+                    <span class="text-xs font-mono bg-slate-100 text-slate-500 px-2 py-1 rounded-full">#${index + 1}</span>
+                    <button onclick="removeItem(${index})"
+                            class="text-rose-500 hover:text-rose-700 bg-rose-50 hover:bg-rose-100 p-2 rounded-lg transition-smooth"
+                            title="Remover">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                  d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7
+                                     m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/>
+                        </svg>
+                    </button>
+                </div>
+                <h3 class="text-lg font-semibold text-slate-700 mb-4">🎬 ${item.name || 'Sem nome'}</h3>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-xs font-medium text-slate-500 mb-1">Nome</label>
+                        <input type="text" id="name-${index}" value="${item.name || ''}"
+                               oninput="updateData(${index}, 'name', this.value)"
+                               class="w-full px-3 py-2 border border-slate-200 rounded-lg bg-slate-50 focus:bg-white focus:ring-2 focus:ring-indigo-200 transition-smooth">
                     </div>
-                    <div class="form-group">
-                        <label>Tipo:</label>
-                        <select id="type-${index}" onchange="updateData(${index}, 'type', this.value)">
-                            <option value="image" ${item.type === 'image' ? 'selected' : ''}>Imagem</option>
-                            <option value="video" ${item.type === 'video' ? 'selected' : ''}>Vídeo</option>
+                    <div>
+                        <label class="block text-xs font-medium text-slate-500 mb-1">Tipo</label>
+                        <select id="type-${index}" onchange="updateData(${index}, 'type', this.value)"
+                                class="w-full px-3 py-2 border border-slate-200 rounded-lg bg-slate-50 focus:ring-2 focus:ring-indigo-200 transition-smooth">
+                            <option value="image" ${item.type === 'image' ? 'selected' : ''}>🖼️ Imagem</option>
+                            <option value="video" ${item.type === 'video' ? 'selected' : ''}>🎥 Vídeo</option>
                         </select>
                     </div>
-                    <div class="form-group full-width">
-                        <label>URL (Link do YouTube, Drive, Vercel, etc):</label>
-                        <input type="text" id="url-${index}" value="${item.url || ''}" oninput="updateData(${index}, 'url', this.value)">
+                    <div class="md:col-span-2">
+                        <label class="block text-xs font-medium text-slate-500 mb-1">URL (YouTube, Drive, Vercel, etc.)</label>
+                        <input type="text" id="url-${index}" value="${item.url || ''}"
+                               oninput="updateData(${index}, 'url', this.value)"
+                               class="w-full px-3 py-2 border border-slate-200 rounded-lg bg-slate-50 focus:bg-white font-mono text-sm focus:ring-2 focus:ring-indigo-200 transition-smooth">
                     </div>
-                    <div class="form-group">
-                        <label>Duração (HH:MM:SS):</label>
-                        <input type="text" id="duration-${index}" value="${item.duration || '00:00:30'}" oninput="updateData(${index}, 'duration', this.value)">
+                    <div>
+                        <label class="block text-xs font-medium text-slate-500 mb-1">Duração (HH:MM:SS)</label>
+                        <input type="text" id="duration-${index}" value="${item.duration || '00:00:30'}"
+                               oninput="updateData(${index}, 'duration', this.value)"
+                               class="w-full px-3 py-2 border border-slate-200 rounded-lg bg-slate-50 focus:ring-2 focus:ring-indigo-200 transition-smooth">
                     </div>
-                    <div class="form-group">
-                        <label>Ativo (Exibir na TV?):</label>
-                        <select id="active-${index}" onchange="updateData(${index}, 'active', this.value === 'true')">
-                            <option value="true" ${String(item.active) !== 'false' ? 'selected' : ''}>Sim (Verdadeiro)</option>
-                            <option value="false" ${String(item.active) === 'false' ? 'selected' : ''}>Não (Falso)</option>
+                    <div>
+                        <label class="block text-xs font-medium text-slate-500 mb-1">Ativo (Exibir na TV?)</label>
+                        <select id="active-${index}" onchange="updateData(${index}, 'active', this.value === 'true')"
+                                class="w-full px-3 py-2 border border-slate-200 rounded-lg bg-slate-50 focus:ring-2 focus:ring-indigo-200 transition-smooth">
+                            <option value="true"  ${String(item.active) !== 'false' ? 'selected' : ''}>✅ Sim (Verdadeiro)</option>
+                            <option value="false" ${String(item.active) === 'false'  ? 'selected' : ''}>❌ Não (Falso)</option>
                         </select>
                     </div>
-                    <div class="form-group">
-                        <label>Data Início (Opcional - DD/MM/AAAA):</label>
-                        <input type="text" id="start-${index}" value="${item.startDate || ''}" oninput="updateData(${index}, 'startDate', this.value)">
+                    <div>
+                        <label class="block text-xs font-medium text-slate-500 mb-1">Data Início (DD/MM/AAAA)</label>
+                        <input type="text" id="start-${index}" value="${item.startDate || ''}" placeholder="DD/MM/AAAA"
+                               oninput="updateData(${index}, 'startDate', this.value)"
+                               class="w-full px-3 py-2 border border-slate-200 rounded-lg bg-slate-50 focus:ring-2 focus:ring-indigo-200 transition-smooth">
                     </div>
-                    <div class="form-group">
-                        <label>Data Fim (Opcional - DD/MM/AAAA):</label>
-                        <input type="text" id="end-${index}" value="${item.endDate || ''}" oninput="updateData(${index}, 'endDate', this.value)">
+                    <div>
+                        <label class="block text-xs font-medium text-slate-500 mb-1">Data Fim (DD/MM/AAAA)</label>
+                        <input type="text" id="end-${index}" value="${item.endDate || ''}" placeholder="DD/MM/AAAA"
+                               oninput="updateData(${index}, 'endDate', this.value)"
+                               class="w-full px-3 py-2 border border-slate-200 rounded-lg bg-slate-50 focus:ring-2 focus:ring-indigo-200 transition-smooth">
                     </div>
                 </div>
             `;
             container.appendChild(div);
         });
+
+        updateItemCount();
     }
 
-    // Atualiza a variável sempre que o usuário digita algo
-    function updateData(index, field, value) {
-        playlistData[index][field] = value;
-    }
+    // ─── HELPERS ──────────────────────────────────────────
+    function updateData(index, field, value) { playlistData[index][field] = value; }
 
-    // Adiciona novo card em branco
     function addEmptyItem() {
-        playlistData.push({
-            name: "Nova Mídia",
-            type: "image",
-            url: "",
-            duration: "00:00:30",
-            startDate: "",
-            endDate: "",
-            active: true
-        });
+        playlistData.push({ name: "Nova Mídia", type: "image", url: "", duration: "00:00:30", startDate: "", endDate: "", active: true });
         renderPlaylist();
     }
 
-    // Remove card
     function removeItem(index) {
-        if(confirm("Tem certeza que deseja remover este item?")) {
+        if (confirm("Tem certeza que deseja remover este item?")) {
             playlistData.splice(index, 1);
             renderPlaylist();
         }
     }
 
-    // 3️⃣ SALVAR NO GITHUB
+    // ─── 3. SALVAR NO GITHUB ──────────────────────────────
     async function saveToGitHub() {
-        const owner = document.getElementById('gh-owner').value.trim();
-        const repo = document.getElementById('gh-repo').value.trim();
-        const token = document.getElementById('gh-token').value.trim();
+        const owner    = document.getElementById('gh-owner').value.trim();
+        const repo     = document.getElementById('gh-repo').value.trim();
+        const token    = document.getElementById('gh-token').value.trim();
         const statusEl = document.getElementById('status');
 
-        if (!token) {
-            alert("Você precisa informar o seu GitHub Token (PAT) para conseguir salvar alterações!");
-            return;
-        }
-
-        if (!fileSha) {
-            alert("Você precisa Carregar a Playlist atual antes de salvar!");
-            return;
-        }
+        if (!token)    { alert("Você precisa informar o GitHub Token (PAT) para salvar alterações!"); return; }
+        if (!fileSha)  { alert("Você precisa Carregar a Playlist atual antes de salvar!"); return; }
 
         statusEl.innerHTML = "⏳ Enviando atualizações para o GitHub...";
-        statusEl.className = "";
+        statusEl.className = "text-slate-500";
 
-        const url = `https://api.github.com/repos/${owner}/${repo}/contents/playlist.json`;
-        
-        // Converte os dados do formulário de volta para texto JSON formatado bonito
+        const url           = `https://api.github.com/repos/${owner}/${repo}/contents/playlist.json`;
         const newJsonString = JSON.stringify(playlistData, null, 2);
-        // Converte o texto JSON em Base64 (formato exigido pelo GitHub)
         const base64Content = utf8_to_b64(newJsonString);
 
         const bodyData = {
             message: "Atualização da Playlist via Painel",
             content: base64Content,
-            sha: fileSha // O GitHub exige a chave SHA da versão anterior para evitar conflitos
+            sha: fileSha
         };
 
         try {
             const res = await fetch(url, {
                 method: "PUT",
                 headers: {
-                    'Accept': 'application/vnd.github.v3+json',
+                    'Accept':        'application/vnd.github.v3+json',
                     'Authorization': `token ${token}`,
-                    'Content-Type': 'application/json'
+                    'Content-Type':  'application/json'
                 },
                 body: JSON.stringify(bodyData)
             });
@@ -323,14 +387,14 @@
             }
 
             const result = await res.json();
-            fileSha = result.content.sha; // Atualiza o SHA para caso a pessoa clique em salvar de novo sem recarregar a página
+            fileSha = result.content.sha; // Atualiza SHA para salvar novamente sem recarregar
 
             statusEl.innerHTML = "🎉 Sucesso! A TV Corporativa vai receber a atualização em alguns minutos.";
-            statusEl.className = "success";
+            statusEl.className = "text-emerald-600 font-semibold";
         } catch (err) {
             console.error(err);
             statusEl.innerHTML = "❌ Falha ao salvar: " + err.message;
-            statusEl.className = "error";
+            statusEl.className = "text-rose-600 font-semibold";
         }
     }
 </script>
