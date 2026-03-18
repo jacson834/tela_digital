@@ -3,96 +3,178 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Tela Digital · Painel</title>
-    <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%234F46E5'%3E%3Cpath d='M21 3H3c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h5v2h8v-2h5c1.1 0 1.99-.9 1.99-2L23 5c0-1.1-.9-2-2-2zm0 14H3V5h18v12zm-5-6l-7 4V7z'/%3E%3C/svg%3E" type="image/svg+xml">
+    <title>Tela Digital · Painel Pro</title>
+    <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%23BEF264'%3E%3Cpath d='M21 3H3c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h5v2h8v-2h5c1.1 0 1.99-.9 1.99-2L23 5c0-1.1-.9-2-2-2zm0 14H3V5h18v12zm-5-6l-7 4V7z'/%3E%3C/svg%3E" type="image/svg+xml">
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'acid-green': '#BEF264',
+                        'deep-dark': '#0A0A0A',
+                        'surface': '#141414',
+                        'border': '#27272A',
+                    }
+                }
+            }
+        }
+    </script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
     <style>
+        :root {
+            --acid-green: #BEF264;
+            --deep-dark: #0A0A0A;
+            --surface: #141414;
+            --border: #27272A;
+        }
         * { font-family: 'Inter', system-ui, sans-serif; }
-        .transition-smooth { transition: all 0.2s ease; }
-        .playlist-item-enter { animation: slideIn 0.3s ease; }
-        @keyframes slideIn {
-            from { opacity: 0; transform: translateY(10px); }
-            to   { opacity: 1; transform: translateY(0); }
+        .mono { font-family: 'JetBrains Mono', monospace; }
+        
+        body { background-color: var(--deep-dark); color: #F4F4F5; }
+        
+        .btn-acid {
+            background-color: var(--acid-green);
+            color: var(--deep-dark);
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+            border: 1px solid var(--acid-green);
+        }
+        .btn-acid:hover {
+            background-color: #D9FF00;
+            transform: scale(1.02);
+            box-shadow: 0 0 30px rgba(190, 242, 100, 0.4);
+        }
+        
+        .input-dark {
+            background-color: var(--surface);
+            border: 1px solid var(--border);
+            color: white;
+            transition: all 0.2s ease;
+        }
+        .input-dark:focus {
+            border-color: var(--acid-green);
+            outline: none;
+            box-shadow: 0 0 0 1px var(--acid-green);
+        }
+
+        .media-card {
+            background-color: var(--surface);
+            border: 1px solid var(--border);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .media-card:hover {
+            border-color: var(--acid-green);
+            transform: translateY(-4px);
+            box-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.5);
+        }
+        
+        @keyframes fadeInStagger {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .stagger-item { animation: fadeInStagger 0.5s both; }
+
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: var(--deep-dark); }
+        ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: #3F3F46; }
+
+        .glow-active {
+            box-shadow: 0 0 15px rgba(190, 242, 100, 0.2);
+            border-color: var(--acid-green) !important;
         }
     </style>
 </head>
-<body class="bg-gradient-to-br from-slate-50 to-slate-100 min-h-screen p-4 md:p-8">
+<body class="min-h-screen selection:bg-acid-green selection:text-black">
 
 <!-- ═══════════════════════════════════════════════════
-     TELA DE LOGIN
+     TELA DE LOGIN (BRUTAL TECH)
+Setting up a high-contrast, technical entry point.
 ═══════════════════════════════════════════════════ -->
-<div id="login-screen" class="flex items-center justify-center min-h-screen">
-    <div class="bg-white rounded-2xl shadow-xl border border-slate-200 p-10 w-full max-w-sm text-center">
-        <div class="flex justify-center mb-4">
-            <span class="bg-indigo-100 text-indigo-600 p-4 rounded-2xl text-4xl">🔒</span>
+<div id="login-screen" class="flex items-center justify-center min-h-screen p-6">
+    <div class="w-full max-w-md">
+        <div class="mb-12 text-center">
+            <div class="inline-block bg-acid-green text-black px-4 py-1 text-xs font-black uppercase tracking-[0.2em] mb-4">Acesso Restrito</div>
+            <h2 class="text-5xl font-black text-white tracking-tighter mb-2 italic">TELA<span class="text-acid-green">_</span>DIGITAL</h2>
+            <p class="text-zinc-500 font-medium">Terminal de Configuração v2.0</p>
         </div>
-        <h2 class="text-2xl font-semibold text-slate-800 mb-1">Acesso Restrito</h2>
-        <p class="text-slate-500 text-sm mb-6">Digite a senha para acessar o painel da Tela Digital.</p>
 
-        <input type="password" id="admin-password" placeholder="Senha"
-               class="w-full px-4 py-3 border border-slate-200 rounded-xl bg-slate-50 focus:bg-white focus:ring-2 focus:ring-indigo-200 focus:border-indigo-400 transition-smooth text-center mb-4"
-               onkeydown="if(event.key==='Enter') checkPassword()">
+        <div class="bg-surface border border-border p-8 shadow-2xl">
+            <div class="mb-6">
+                <label class="block text-[10px] uppercase tracking-widest text-zinc-500 font-bold mb-2">Chave de Acesso</label>
+                <input type="password" id="admin-password" placeholder="••••••••"
+                       class="w-full input-dark px-4 py-4 text-xl tracking-[0.3em] text-center"
+                       onkeydown="if(event.key==='Enter') checkPassword()">
+            </div>
 
-        <button onclick="checkPassword()"
-                class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-semibold px-6 py-3 rounded-xl transition-smooth">
-            Entrar no Painel
-        </button>
+            <button onclick="checkPassword()"
+                    class="w-full btn-acid py-4 text-sm flex items-center justify-center gap-2">
+                <span>Inicializar Painel</span>
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6"/></svg>
+            </button>
 
-        <p id="login-error" class="text-rose-500 text-sm mt-4 hidden">Senha incorreta!</p>
+            <p id="login-error" class="text-rose-500 text-xs mt-4 text-center font-bold uppercase tracking-tighter hidden">! ERRO: Senha Inválida</p>
+        </div>
     </div>
 </div>
 
 <!-- ═══════════════════════════════════════════════════
      DASHBOARD PRINCIPAL
 ═══════════════════════════════════════════════════ -->
-<div id="dashboard" class="max-w-5xl mx-auto hidden">
+<div id="dashboard" class="max-w-[1600px] mx-auto p-6 md:p-12 hidden">
 
-    <!-- Cabeçalho -->
-    <div class="mb-8 flex items-center justify-between bg-white/70 backdrop-blur-sm p-4 rounded-2xl shadow-sm border border-slate-200/60">
-        <div class="flex items-center gap-3">
-            <span class="text-3xl">📺</span>
-            <h1 class="text-2xl md:text-3xl font-semibold text-slate-800 tracking-tight">Painel · Tela Digital</h1>
-            <span class="bg-indigo-50 text-indigo-700 text-xs font-medium px-3 py-1 rounded-full border border-indigo-200">beta</span>
+    <!-- Cabeçalho Assimétrico -->
+    <div class="mb-16 flex flex-col md:flex-row items-start md:items-end justify-between gap-8 border-b border-border pb-12">
+        <div>
+            <div class="flex items-center gap-2 mb-4">
+                <span class="w-3 h-3 bg-acid-green animate-pulse"></span>
+                <span class="text-[10px] uppercase tracking-[0.3em] font-bold text-zinc-500">Terminal de Controle</span>
+            </div>
+            <h1 class="text-6xl md:text-8xl font-black tracking-tighter italic">PAINEL<span class="text-acid-green">_</span>PRO</h1>
         </div>
-        <div class="flex items-center gap-3">
-            <span class="hidden md:block text-sm text-slate-500">⚡ edição em tempo real</span>
+        
+        <div class="flex flex-wrap gap-4">
             <button onclick="openSettings()"
-                    class="text-xs text-slate-500 hover:text-indigo-600 bg-slate-100 hover:bg-indigo-50 border border-slate-200 hover:border-indigo-200 px-3 py-1.5 rounded-lg transition-smooth">
-                ⚙️ Configurações
+                    class="bg-surface hover:bg-zinc-800 border border-border text-[10px] uppercase tracking-widest font-bold px-6 py-3 transition-colors">
+                Configurações
             </button>
             <button onclick="logout()"
-                    class="text-xs text-slate-500 hover:text-rose-600 bg-slate-100 hover:bg-rose-50 border border-slate-200 hover:border-rose-200 px-3 py-1.5 rounded-lg transition-smooth">
-                🚪 Sair
+                    class="bg-rose-950/30 hover:bg-rose-900/50 border border-rose-900/50 text-rose-500 text-[10px] uppercase tracking-widest font-bold px-6 py-3 transition-colors">
+                Encerrar Sessão
             </button>
         </div>
     </div>
 
     <!-- Barra de ações -->
-    <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mb-6">
-        <h2 class="text-xl font-semibold text-slate-700 flex items-center gap-2">
-            <span class="bg-indigo-100 text-indigo-700 p-1.5 rounded-lg">📋</span>
-            Mídias da Playlist
-            <span class="bg-slate-200 text-slate-600 text-sm px-2.5 py-0.5 rounded-full ml-2 font-mono" id="item-count">0</span>
-        </h2>
-        <button onclick="addEmptyItem()"
-                class="inline-flex items-center gap-2 bg-indigo-600 hover:bg-indigo-700 text-white px-5 py-2.5 rounded-xl shadow-sm shadow-indigo-200 transition-smooth font-medium">
-            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
-            </svg>
-            Nova Mídia
+    <div class="flex flex-col sm:flex-row items-center justify-between gap-6 mb-12">
+        <div class="flex items-center gap-6">
+            <div class="mono text-zinc-500 text-sm">
+                <span class="text-acid-green font-bold" id="item-count">00</span> ITEMS_LOADED
+            </div>
+            <div class="h-4 w-[1px] bg-border hidden sm:block"></div>
+            <div class="text-[10px] uppercase tracking-widest font-bold text-zinc-500">Playlist Offline: <span class="text-white">Standby</span></div>
+        </div>
+        
+        <button onclick="openAddModal()"
+                class="btn-acid px-8 py-3 text-sm flex items-center gap-3">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
+            <span>Nova Mídia</span>
         </button>
     </div>
 
-    <!-- Container da Playlist -->
-    <div id="playlist-container" class="space-y-5 mb-8"></div>
+    <!-- Container da Playlist (Media Wall) -->
+    <div id="playlist-container" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 mb-24"></div>
 
-    <!-- Botão salvar -->
-    <div class="sticky bottom-6 z-10 flex justify-center">
+    <!-- Botão Salvar (Sticky) -->
+    <div class="fixed bottom-12 left-0 right-0 z-50 flex justify-center pointer-events-none">
         <button onclick="saveToGitHub()"
-                class="group bg-gradient-to-r from-emerald-600 to-emerald-500 hover:from-emerald-700 hover:to-emerald-600 text-white font-semibold px-8 py-4 rounded-2xl shadow-xl shadow-emerald-200/50 transition-all hover:scale-105 active:scale-95 flex items-center gap-3 text-lg">
-            <span class="text-2xl group-hover:rotate-12 transition-transform">🚀</span>
-            Salvar Alterações no GitHub
+                class="btn-acid px-12 py-5 shadow-2xl pointer-events-auto flex items-center gap-4 group">
+            <span class="text-xl group-hover:rotate-45 transition-transform duration-300">⚡</span>
+            <span>Salvar Alterações</span>
         </button>
     </div>
 
@@ -101,61 +183,48 @@
 <!-- ═══════════════════════════════════════════════════
      MODAL DE CONFIGURAÇÕES (GITHUB)
 ═══════════════════════════════════════════════════ -->
-<div id="settings-modal" class="fixed inset-0 z-[60] flex items-center justify-center hidden opacity-0 transition-opacity duration-300">
+<div id="settings-modal" class="fixed inset-0 z-[60] flex items-center justify-center hidden opacity-0 transition-all duration-300">
     <!-- Backdrop -->
-    <div class="absolute inset-0 bg-slate-900/40 backdrop-blur-sm" onclick="closeSettings()"></div>
+    <div class="absolute inset-0 bg-black/80 backdrop-blur-md" onclick="closeSettings()"></div>
     
     <!-- Conteúdo do Modal -->
-    <div id="settings-modal-content" class="relative bg-white rounded-2xl shadow-2xl w-full max-w-xl mx-4 overflow-hidden transform scale-95 transition-transform duration-300">
-        <div class="bg-gradient-to-r from-indigo-600 to-indigo-500 px-6 py-4 flex items-center justify-between">
-            <div class="flex items-center gap-3">
-                <div class="bg-white/20 p-2 rounded-xl backdrop-blur-sm">
-                    <svg class="w-5 h-5 text-white" fill="currentColor" viewBox="0 0 24 24">
-                        <path d="M12 2C6.477 2 2 6.477 2 12c0 4.42 2.865 8.166 6.839 9.489.5.092.682-.217.682-.482
-                                 0-.237-.008-.866-.013-1.7-2.782.603-3.369-1.34-3.369-1.34-.454-1.156-1.11-1.463-1.11-1.463
-                                 -.908-.62.069-.608.069-.608 1.003.07 1.531 1.03 1.531 1.03.892 1.529 2.341 1.087 2.91.832
-                                 .092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.11-4.555-4.943 0-1.091.39-1.984 1.03-2.682
-                                 -.103-.253-.447-1.27.098-2.646 0 0 .84-.269 2.75 1.025.8-.223 1.65-.334 2.5-.334
-                                 .85 0 1.7.111 2.5.334 1.91-1.294 2.75-1.025 2.75-1.025.545 1.376.201 2.393.099 2.646
-                                 .64.698 1.03 1.591 1.03 2.682 0 3.841-2.337 4.687-4.565 4.935.359.309.678.919.678 1.852
-                                 0 1.336-.012 2.415-.012 2.743 0 .267.18.578.688.48C19.138 20.161 22 16.418 22 12
-                                 c0-5.523-4.477-10-10-10z"/>
-                    </svg>
-                </div>
-                <h2 class="text-xl font-semibold text-white tracking-tight">Conexão com GitHub</h2>
+    <div id="settings-modal-content" class="relative bg-surface border border-border w-full max-w-2xl mx-4 transform scale-95 transition-all duration-300">
+        <div class="border-b border-border px-8 py-6 flex items-center justify-between">
+            <div>
+                <h2 class="text-2xl font-black italic tracking-tight uppercase">Configurações<span class="text-acid-green">.</span>git</h2>
             </div>
-            <button onclick="closeSettings()" class="text-white hover:text-indigo-200 transition-colors">
-                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+            <button onclick="closeSettings()" class="text-zinc-500 hover:text-white transition-colors">
+                <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
             </button>
         </div>
         
-        <div class="p-6">
-            <p class="text-slate-500 text-sm mb-4">Estes dados ficam salvos apenas no seu navegador local para enviar atualizações.</p>
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+        <div class="p-8">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8 mb-12">
                 <div>
-                    <label class="block text-sm font-medium text-slate-600 mb-1.5">Dono do Repositório</label>
-                    <div class="relative">
-                        <span class="absolute inset-y-0 left-0 pl-3 flex items-center text-slate-400">@</span>
-                        <input type="text" id="gh-owner" placeholder="ex: jacson834"
-                               class="w-full pl-8 pr-4 py-3 border border-slate-200 rounded-xl bg-slate-50 focus:bg-white focus:ring-2 focus:ring-indigo-200 focus:border-indigo-400 transition-smooth">
-                    </div>
+                    <label class="block text-[10px] uppercase tracking-widest font-black text-zinc-500 mb-2">Repositório Owner</label>
+                    <input type="text" id="gh-owner" placeholder="github_user"
+                           class="w-full input-dark px-4 py-3 mono text-sm">
                 </div>
                 <div>
-                    <label class="block text-sm font-medium text-slate-600 mb-1.5">Nome do Repositório</label>
-                    <input type="text" id="gh-repo" placeholder="ex: tv-corporativa"
-                           class="w-full px-4 py-3 border border-slate-200 rounded-xl bg-slate-50 focus:bg-white focus:ring-2 focus:ring-indigo-200 focus:border-indigo-400 transition-smooth">
+                    <label class="block text-[10px] uppercase tracking-widest font-black text-zinc-500 mb-2">Projeto Nome</label>
+                    <input type="text" id="gh-repo" placeholder="repo_name"
+                           class="w-full input-dark px-4 py-3 mono text-sm">
                 </div>
                 <div class="md:col-span-2">
-                    <label class="block text-sm font-medium text-slate-600 mb-1.5">GitHub Token (PAT)</label>
-                    <input type="text" id="gh-token" placeholder="ghp_xxxxxxxxxxxxxxxxxxxx"
-                           class="w-full px-4 py-3 border border-slate-200 rounded-xl bg-slate-50 font-mono text-sm focus:bg-white focus:ring-2 focus:ring-indigo-200 focus:border-indigo-400 transition-smooth">
+                    <label class="block text-[10px] uppercase tracking-widest font-black text-zinc-500 mb-2">Personal Access Token (PAT)</label>
+                    <input type="password" id="gh-token" placeholder="••••••••••••••••••••••••••••"
+                           class="w-full input-dark px-4 py-3 mono text-sm">
                 </div>
             </div>
-            <div class="flex items-center justify-end gap-3">
-                <button onclick="closeSettings()" class="px-5 py-2.5 rounded-xl text-slate-600 hover:bg-slate-100 font-medium transition-smooth">Cancelar</button>
+            
+            <div class="flex flex-col sm:flex-row gap-4">
                 <button onclick="loadFromGitHub()"
-                        class="inline-flex items-center gap-2 bg-indigo-600 hover:bg-indigo-700 text-white font-medium px-5 py-2.5 rounded-xl shadow-sm transition-smooth">
-                    ⬇️ Carregar Playlist
+                        class="flex-1 btn-acid py-4 text-xs">
+                    Sincronizar Playlist
+                </button>
+                <button onclick="closeSettings()" 
+                        class="flex-1 bg-zinc-800 hover:bg-zinc-700 text-white py-4 text-xs font-bold uppercase tracking-widest transition-colors">
+                    Voltar
                 </button>
             </div>
         </div>
@@ -163,40 +232,101 @@
 </div>
 
 <!-- ═══════════════════════════════════════════════════
-     TOAST NOTIFICATION (Avisos Flutuantes)
+     MODAL: ADICIONAR MÍDIA (VIBRANT TECH)
 ═══════════════════════════════════════════════════ -->
-<div id="toast" class="fixed bottom-6 right-6 transform translate-y-full opacity-0 transition-all duration-300 z-50 rounded-2xl px-6 py-4 text-white shadow-2xl flex items-center gap-3 pointer-events-none">
-    <span id="toast-icon" class="text-2xl"></span>
-    <span id="toast-message" class="font-medium"></span>
+<div id="add-media-modal" class="fixed inset-0 z-[100] hidden flex items-center justify-center p-6 transition-all duration-300 opacity-0">
+    <div class="absolute inset-0 bg-black/90 backdrop-blur-sm" onclick="closeAddModal()"></div>
+    <div id="add-media-content" class="relative w-full max-w-xl bg-surface border border-border p-8 shadow-2xl transform scale-95 transition-all duration-300">
+        <div class="mb-8 flex items-center justify-between border-b border-zinc-800 pb-4">
+            <h3 class="text-2xl font-black italic tracking-tighter text-white uppercase italic">ADICIONAR<span class="text-acid-green">_</span>MÍDIA</h3>
+            <button onclick="closeAddModal()" class="text-zinc-500 hover:text-white transition-colors">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+            </button>
+        </div>
+
+        <div class="space-y-6">
+            <div class="grid grid-cols-2 gap-6">
+                <div class="col-span-2">
+                    <label class="block text-[10px] uppercase tracking-widest text-zinc-500 font-bold mb-2">Identificação / Nome</label>
+                    <input type="text" id="add-name" placeholder="EX: ANÚNCIO_PROMO_01" class="w-full input-dark px-4 py-3">
+                </div>
+                <div class="col-span-2">
+                    <label class="block text-[10px] uppercase tracking-widest text-zinc-500 font-bold mb-2">URL da Mídia</label>
+                    <input type="text" id="add-url" placeholder="https://..." class="w-full input-dark px-4 py-3 mono text-sm">
+                </div>
+                <div>
+                    <label class="block text-[10px] uppercase tracking-widest text-zinc-500 font-bold mb-2">Tipo</label>
+                    <select id="add-type" class="w-full input-dark px-4 py-3 appearance-none font-bold uppercase">
+                        <option value="image">IMAGEM</option>
+                        <option value="video">VÍDEO</option>
+                    </select>
+                </div>
+                <div>
+                    <label class="block text-[10px] uppercase tracking-widest text-zinc-500 font-bold mb-2">Duração (S)</label>
+                    <input type="text" id="add-duration" value="00:00:15" class="w-full input-dark px-4 py-3 mono">
+                </div>
+                <div>
+                    <label class="block text-[10px] uppercase tracking-widest text-zinc-500 font-bold mb-2">Início (DD/MM/AAAA)</label>
+                    <input type="text" id="add-start" placeholder="Opcional" class="w-full input-dark px-4 py-3 mono text-xs">
+                </div>
+                <div>
+                    <label class="block text-[10px] uppercase tracking-widest text-zinc-500 font-bold mb-2">Fim (DD/MM/AAAA)</label>
+                    <input type="text" id="add-end" placeholder="Opcional" class="w-full input-dark px-4 py-3 mono text-xs">
+                </div>
+            </div>
+
+            <div class="flex flex-col sm:flex-row gap-4 pt-6">
+                <button onclick="confirmAddMedia()" class="flex-1 btn-acid py-4 flex items-center justify-center gap-2">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
+                    SALVAR E PUBLICAR
+                </button>
+                <button onclick="closeAddModal()" class="flex-1 bg-zinc-800 text-zinc-400 font-bold uppercase tracking-widest hover:bg-zinc-700 transition-colors py-4">
+                    CANCELAR
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════
+     TOAST NOTIFICATION (SYSTEM ALERTS)
+═══════════════════════════════════════════════════ -->
+<div id="toast" class="fixed bottom-12 right-12 translate-x-full opacity-0 transition-all duration-500 z-[100] bg-surface border-l-4 border-acid-green p-6 shadow-2xl flex items-center gap-4 pointer-events-none">
+    <div id="toast-icon-container" class="w-10 h-10 flex items-center justify-center bg-acid-green/10 text-acid-green">
+        <span id="toast-icon" class="text-xl"></span>
+    </div>
+    <div>
+        <div class="text-[10px] uppercase tracking-widest font-black text-zinc-500 mb-1">Notificação do Sistema</div>
+        <div id="toast-message" class="font-bold text-sm tracking-tight text-white"></div>
+    </div>
 </div>
 
 <script>
-    // ─── SENHA ────────────────────────────────────────────
+    // ─── CONFIG ───────────────────────────────────────────
     const APP_PASSWORD = "tvcorporativa";
-
     let fileSha = "";
     let playlistData = [];
 
     // ─── INIT ─────────────────────────────────────────────
-    // Preenche campos do GitHub a partir do localStorage
     document.getElementById('gh-owner').value = localStorage.getItem('ghOwner') || "";
     document.getElementById('gh-repo').value  = localStorage.getItem('ghRepo')  || "";
     document.getElementById('gh-token').value = localStorage.getItem('ghToken') || "";
 
-    // Mantém usuário logado enquanto a aba estiver aberta
     if (sessionStorage.getItem('dashboardAuth') === 'true') {
         showDashboard();
         attemptAutoLoad();
     }
 
-    // ─── LOGIN ────────────────────────────────────────────
+    // ─── AUTH ─────────────────────────────────────────────
     function checkPassword() {
         if (document.getElementById('admin-password').value === APP_PASSWORD) {
             sessionStorage.setItem('dashboardAuth', 'true');
             showDashboard();
             attemptAutoLoad();
         } else {
-            document.getElementById('login-error').classList.remove('hidden');
+            const err = document.getElementById('login-error');
+            err.classList.remove('hidden');
+            err.classList.add('animate-bounce');
         }
     }
 
@@ -214,59 +344,66 @@
         if (document.getElementById('gh-owner').value && document.getElementById('gh-repo').value) {
             loadFromGitHub();
         } else {
-            openSettings(); // Abre os ajustes caso falte preencher os dados
+            openSettings();
         }
     }
 
-    // ─── UTILIDADES BASE64 / UTF-8 ────────────────────────
+    // ─── UTILS ────────────────────────────────────────────
     function utf8_to_b64(str) { return window.btoa(unescape(encodeURIComponent(str))); }
     function b64_to_utf8(str) { return decodeURIComponent(escape(window.atob(str))); }
 
-    // ─── CONTADOR ─────────────────────────────────────────
     function updateItemCount() {
         const el = document.getElementById('item-count');
-        if (el) el.innerText = playlistData.length;
+        if (el) el.innerText = String(playlistData.length).padStart(2, '0');
     }
 
-    // ─── TOAST (AVISOS) ───────────────────────────────────
+    // ─── TOAST (NEW AESTHETIC) ────────────────────────────
     let toastTimeout;
     function showToast(message, type = 'success') {
         const toast = document.getElementById('toast');
         const icon = document.getElementById('toast-icon');
         const text = document.getElementById('toast-message');
+        const container = document.getElementById('toast-icon-container');
+
+        if (!toast || !text) return;
 
         clearTimeout(toastTimeout);
-        text.innerText = message;
+        text.innerText = (message || "").toUpperCase();
         
-        // Reseta classes e cores base
-        toast.className = "fixed bottom-6 right-6 transform transition-all duration-300 z-50 rounded-2xl px-6 py-4 text-white shadow-2xl flex items-center gap-3 pointer-events-none";
+        // Reset styles and apply colors based on type
+        const colors = {
+            success: '#BEF264',
+            error: '#F43F5E',
+            info: '#BEF264'
+        };
+        const color = colors[type] || colors.success;
         
-        if (type === 'success') {
-            toast.classList.add('bg-emerald-600');
-            icon.innerText = '🎉';
-        } else if (type === 'error') {
-            toast.classList.add('bg-rose-600');
-            icon.innerText = '❌';
-        } else {
-            toast.classList.add('bg-indigo-600');
-            icon.innerText = '⏳';
+        toast.style.borderLeftColor = color;
+        if (container) {
+            container.style.color = color;
+            container.style.backgroundColor = `${color}1A`; // 10% opacity
+        }
+        
+        if (icon) {
+            icon.innerText = type === 'success' ? '✓' : (type === 'error' ? '!' : '⧗');
         }
 
-        requestAnimationFrame(() => toast.classList.remove('translate-y-full', 'opacity-0'));
+        toast.classList.remove('translate-x-full', 'opacity-0');
 
         if (type !== 'info') {
-            toastTimeout = setTimeout(() => toast.classList.add('translate-y-full', 'opacity-0'), 3000);
+            toastTimeout = setTimeout(() => toast.classList.add('translate-x-full', 'opacity-0'), 4000);
         }
     }
 
-    // ─── MODAL CONFIGURAÇÕES ──────────────────────────────
+    // ─── MODAL CONTROLS ──────────────────────────────────
     function openSettings() {
         const modal = document.getElementById('settings-modal');
         const content = document.getElementById('settings-modal-content');
         modal.classList.remove('hidden');
-        void modal.offsetWidth; // Força o navegador a renderizar antes de animar
-        modal.classList.remove('opacity-0');
-        content.classList.remove('scale-95');
+        setTimeout(() => {
+            modal.classList.remove('opacity-0');
+            content.classList.remove('scale-95');
+        }, 10);
     }
 
     function closeSettings() {
@@ -277,19 +414,76 @@
         setTimeout(() => modal.classList.add('hidden'), 300);
     }
 
-    // ─── 1. CARREGAR DO GITHUB ────────────────────────────
+    function openAddModal() {
+        const modal = document.getElementById('add-media-modal');
+        const content = document.getElementById('add-media-content');
+        
+        // Reset fields
+        document.getElementById('add-name').value = "";
+        document.getElementById('add-url').value = "";
+        document.getElementById('add-duration').value = "00:00:15";
+        document.getElementById('add-type').value = "image";
+        document.getElementById('add-start').value = "";
+        document.getElementById('add-end').value = "";
+
+        modal.classList.remove('hidden');
+        setTimeout(() => {
+            modal.classList.remove('opacity-0');
+            content.classList.remove('scale-95');
+        }, 10);
+    }
+
+    function closeAddModal() {
+        const modal = document.getElementById('add-media-modal');
+        const content = document.getElementById('add-media-content');
+        modal.classList.add('opacity-0');
+        content.classList.add('scale-95');
+        setTimeout(() => modal.classList.add('hidden'), 300);
+    }
+
+    async function confirmAddMedia() {
+        const name = document.getElementById('add-name').value.trim();
+        const url  = document.getElementById('add-url').value.trim();
+        const type = document.getElementById('add-type').value;
+        const dur  = document.getElementById('add-duration').value.trim();
+        const start = document.getElementById('add-start').value.trim();
+        const end   = document.getElementById('add-end').value.trim();
+
+        if (!name || !url) {
+            showToast("NOME E URL SÃO OBRIGATÓRIOS", "error");
+            return;
+        }
+
+        playlistData.unshift({
+            name, url, type, 
+            duration: dur || "00:00:15",
+            startDate: start,
+            endDate: end,
+            active: true
+        });
+
+        renderPlaylist();
+        closeAddModal();
+        
+        showToast("ITEM ADICIONADO LOCALMENTE", "info");
+        
+        // Auto-save call
+        await saveToGitHub();
+    }
+
+    // ─── 1. FETCH FROM GITHUB ─────────────────────────────
     async function loadFromGitHub() {
         const owner    = document.getElementById('gh-owner').value.trim();
         const repo     = document.getElementById('gh-repo').value.trim();
         const token    = document.getElementById('gh-token').value.trim();
 
-        if (!owner || !repo) { alert("Preencha Usuário e Repositório!"); return; }
+        if (!owner || !repo) { showToast("Dono e Repositório Obrigatórios", "error"); return; }
 
         localStorage.setItem('ghOwner', owner);
         localStorage.setItem('ghRepo',  repo);
         localStorage.setItem('ghToken', token);
 
-        showToast("Carregando playlist do GitHub...", "info");
+        showToast("Sincronizando...", "info");
 
         const url = `https://api.github.com/repos/${owner}/${repo}/contents/playlist.json`;
 
@@ -298,7 +492,7 @@
             if (token) headers['Authorization'] = `token ${token}`;
 
             const res = await fetch(url, { headers });
-            if (!res.ok) throw new Error("Falha ao buscar arquivo. Verifique se o repositório existe.");
+            if (!res.ok) throw new Error("Repositório não encontrado ou falha na rede.");
 
             const data  = await res.json();
             fileSha     = data.sha;
@@ -306,167 +500,181 @@
             playlistData = JSON.parse(b64_to_utf8(data.content));
             renderPlaylist();
 
-            showToast("Playlist carregada com sucesso!", "success");
-            closeSettings(); // Fecha o modal ao carregar com sucesso
+            showToast("Playlist Sincronizada", "success");
+            closeSettings();
         } catch (err) {
             console.error(err);
-            showToast("Erro ao carregar: " + err.message, "error");
+            showToast("Erro de Sincronização: " + err.message, "error");
         }
     }
 
-    // ─── 2. RENDERIZAR PLAYLIST ───────────────────────────
+    // ─── 2. RENDER MEDIA WALL ─────────────────────────────
     function renderPlaylist() {
         const container = document.getElementById('playlist-container');
         container.innerHTML = "";
 
         if (playlistData.length === 0) {
             container.innerHTML = `
-                <div class="text-center py-16 text-slate-400">
-                    <div class="text-5xl mb-3">📭</div>
-                    <p class="text-lg font-medium">A playlist está vazia.</p>
-                    <p class="text-sm mt-1">Adicione uma nova mídia ou carregue do GitHub.</p>
+                <div class="col-span-full border border-dashed border-border p-32 text-center">
+                    <div class="text-zinc-600 mb-4 opacity-50"># NO_DATA_AVAILABLE</div>
+                    <div class="text-2xl font-black italic text-zinc-400">PLAYLIST VAZIA</div>
                 </div>`;
             updateItemCount();
             return;
         }
 
         playlistData.forEach((item, index) => {
-            const isExpanded = item._expanded;
-            const div = document.createElement('div');
-            div.className = "bg-white rounded-2xl border border-slate-200 p-5 playlist-item-enter transition-smooth hover:border-indigo-200 hover:shadow-md";
-            div.innerHTML = `
-                <!-- Cabeçalho Clicável (Accordion) -->
-                <div class="flex items-center justify-between cursor-pointer group select-none" onclick="toggleItem(${index})">
+            const card = document.createElement('div');
+            const isCollapsed = item._collapsed;
+            card.className = `media-card flex flex-col stagger-item ${String(item.active) !== 'false' ? 'glow-active' : ''}`;
+            card.style.animationDelay = `${index * 0.05}s`;
+            
+            card.innerHTML = `
+                <!-- Card Header (Clickable Top) -->
+                <div class="p-6 flex items-center justify-between cursor-pointer hover:bg-zinc-800/20 transition-colors select-none group" onclick="toggleCollapse(${index})">
                     <div class="flex items-center gap-3">
-                        <span class="text-xs font-mono bg-slate-100 text-slate-500 px-2.5 py-1 rounded-full">#${index + 1}</span>
-                        <h3 id="header-name-${index}" class="text-lg font-semibold text-slate-700 group-hover:text-indigo-600 transition-smooth">🎬 ${item.name || 'Nova Mídia'}</h3>
-                        <span class="text-xs px-2 py-1 rounded-md bg-indigo-50 text-indigo-600 font-medium hidden sm:inline-block">${item.type === 'video' ? '🎥 Vídeo' : '🖼️ Imagem'}</span>
+                        <span class="mono text-[10px] text-acid-green font-bold">#${String(index + 1).padStart(2, '0')}</span>
+                        <div class="text-[9px] px-2 py-0.5 border border-zinc-700 uppercase font-black tracking-widest text-zinc-400">
+                            ${item.type === 'video' ? 'Vídeo' : 'Imagem'}
+                        </div>
+                        <h4 class="text-[11px] font-bold text-zinc-300 truncate max-w-[120px] ${isCollapsed ? 'opacity-100' : 'opacity-0'} transition-opacity">
+                            ${item.name || ''}
+                        </h4>
                     </div>
                     <div class="flex items-center gap-3">
-                        <button onclick="removeItem(${index}); event.stopPropagation();"
-                                class="text-rose-400 hover:text-rose-600 bg-rose-50 hover:bg-rose-100 p-2 rounded-lg transition-smooth" title="Remover">
-                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/>
-                            </svg>
+                        <button onclick="removeItem(${index}); event.stopPropagation();" class="text-zinc-600 hover:text-rose-500 transition-colors">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg>
                         </button>
-                        <div class="p-2 bg-slate-50 rounded-lg text-slate-400 group-hover:bg-indigo-50 group-hover:text-indigo-500 transition-smooth">
-                            <svg id="icon-${index}" class="w-5 h-5 transition-transform duration-300 ${isExpanded ? 'rotate-180' : ''}" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
-                            </svg>
-                        </div>
+                        <svg class="w-4 h-4 text-zinc-600 transition-transform ${isCollapsed ? '' : 'rotate-180'}" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
+                        </svg>
                     </div>
                 </div>
-                
-                <!-- Corpo Expandível -->
-                <div id="content-${index}" class="${isExpanded ? '' : 'hidden'} mt-5 pt-5 border-t border-slate-100">
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+
+                <!-- Info Grid (Collapsible Content) -->
+                <div class="px-6 pb-6 pt-0 space-y-4 ${isCollapsed ? 'hidden' : ''}">
                     <div>
-                        <label class="block text-xs font-medium text-slate-500 mb-1">Nome</label>
+                        <label class="block text-[9px] uppercase tracking-widest text-zinc-600 font-bold mb-1">Identificação</label>
                         <input type="text" value="${item.name || ''}"
                                oninput="updateData(${index}, 'name', this.value)"
-                               class="w-full px-3 py-2 border border-slate-200 rounded-lg bg-slate-50 focus:bg-white focus:ring-2 focus:ring-indigo-200 transition-smooth">
+                               class="w-full input-dark px-3 py-2 text-sm font-bold">
                     </div>
+
                     <div>
-                        <label class="block text-xs font-medium text-slate-500 mb-1">Tipo</label>
-                        <select onchange="updateData(${index}, 'type', this.value)"
-                                class="w-full px-3 py-2 border border-slate-200 rounded-lg bg-slate-50 focus:ring-2 focus:ring-indigo-200 transition-smooth">
-                            <option value="image" ${item.type === 'image' ? 'selected' : ''}>🖼️ Imagem</option>
-                            <option value="video" ${item.type === 'video' ? 'selected' : ''}>🎥 Vídeo</option>
-                        </select>
-                    </div>
-                    <div class="md:col-span-2">
-                        <label class="block text-xs font-medium text-slate-500 mb-1">URL <span class="font-normal text-slate-400">(Aceita links diretos de imagem/vídeo, YouTube e Google Drive)</span></label>
+                        <label class="block text-[9px] uppercase tracking-widest text-zinc-600 font-bold mb-1">Endereço da Mídia (URL)</label>
                         <input type="text" value="${item.url || ''}"
                                oninput="updateData(${index}, 'url', this.value)"
-                               class="w-full px-3 py-2 border border-slate-200 rounded-lg bg-slate-50 focus:bg-white font-mono text-sm focus:ring-2 focus:ring-indigo-200 transition-smooth">
+                               class="w-full input-dark px-3 py-2 mono text-[11px]">
                     </div>
-                    <div>
-                        <label class="block text-xs font-medium text-slate-500 mb-1">Duração (HH:MM:SS)</label>
-                        <input type="text" value="${item.duration || '00:00:30'}"
-                               oninput="updateData(${index}, 'duration', this.value)"
-                               class="w-full px-3 py-2 border border-slate-200 rounded-lg bg-slate-50 focus:ring-2 focus:ring-indigo-200 transition-smooth">
+
+                    <div class="grid grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-[9px] uppercase tracking-widest text-zinc-600 font-bold mb-1">Duração</label>
+                            <input type="text" value="${item.duration || '00:00:15'}"
+                                   oninput="updateData(${index}, 'duration', this.value)"
+                                   class="w-full input-dark px-3 py-2 mono text-xs">
+                        </div>
+                        <div>
+                            <label class="block text-[9px] uppercase tracking-widest text-zinc-600 font-bold mb-1">Tipo</label>
+                            <select onchange="updateData(${index}, 'type', this.value)"
+                                    class="w-full input-dark px-3 py-2 text-xs font-bold appearance-none">
+                                <option value="image" ${item.type === 'image' ? 'selected' : ''}>IMAGEM</option>
+                                <option value="video" ${item.type === 'video' ? 'selected' : ''}>VÍDEO</option>
+                            </select>
+                        </div>
                     </div>
-                    <div>
-                        <label class="block text-xs font-medium text-slate-500 mb-1">Ativo (Exibir na TV?)</label>
-                        <select onchange="updateData(${index}, 'active', this.value === 'true')"
-                                class="w-full px-3 py-2 border border-slate-200 rounded-lg bg-slate-50 focus:ring-2 focus:ring-indigo-200 transition-smooth">
-                            <option value="true"  ${String(item.active) !== 'false' ? 'selected' : ''}>✅ Sim (Verdadeiro)</option>
-                            <option value="false" ${String(item.active) === 'false'  ? 'selected' : ''}>❌ Não (Falso)</option>
-                        </select>
+
+                    <div class="grid grid-cols-2 gap-4 border-t border-zinc-800/50 pt-4">
+                        <div>
+                            <label class="block text-[9px] uppercase tracking-widest text-zinc-600 font-bold mb-1">Início</label>
+                            <input type="text" value="${item.startDate || ''}" placeholder="DD/MM/AAAA"
+                                   oninput="updateData(${index}, 'startDate', this.value)"
+                                   class="w-full input-dark px-3 py-2 mono text-[10px]">
+                        </div>
+                        <div>
+                            <label class="block text-[9px] uppercase tracking-widest text-zinc-600 font-bold mb-1">Fim</label>
+                            <input type="text" value="${item.endDate || ''}" placeholder="DD/MM/AAAA"
+                                   oninput="updateData(${index}, 'endDate', this.value)"
+                                   class="w-full input-dark px-3 py-2 mono text-[10px]">
+                        </div>
                     </div>
-                    <div>
-                        <label class="block text-xs font-medium text-slate-500 mb-1">Data Início (DD/MM/AAAA)</label>
-                        <input type="text" value="${item.startDate || ''}" placeholder="DD/MM/AAAA"
-                               oninput="updateData(${index}, 'startDate', this.value)"
-                               class="w-full px-3 py-2 border border-slate-200 rounded-lg bg-slate-50 focus:ring-2 focus:ring-indigo-200 transition-smooth">
-                    </div>
-                    <div>
-                        <label class="block text-xs font-medium text-slate-500 mb-1">Data Fim (DD/MM/AAAA)</label>
-                        <input type="text" value="${item.endDate || ''}" placeholder="DD/MM/AAAA"
-                               oninput="updateData(${index}, 'endDate', this.value)"
-                               class="w-full px-3 py-2 border border-slate-200 rounded-lg bg-slate-50 focus:ring-2 focus:ring-indigo-200 transition-smooth">
-                    </div>
+
+                    <!-- Footer Actions (Inside Collapsible Area) -->
+                    <div class="pt-6 flex items-center justify-between border-t border-zinc-800">
+                        <div class="flex items-center gap-2">
+                             <div class="w-1.5 h-1.5 rounded-full ${String(item.active) !== 'false' ? 'bg-acid-green shadow-[0_0_8px_var(--acid-green)]' : 'bg-zinc-700'}"></div>
+                             <span class="text-[10px] uppercase font-bold ${String(item.active) !== 'false' ? 'text-acid-green' : 'text-zinc-600'}">
+                                ${String(item.active) !== 'false' ? 'ONLINE' : 'OFFLINE'}
+                             </span>
+                        </div>
+                        <button onclick="toggleActive(${index}); event.stopPropagation();"
+                                class="text-[9px] uppercase tracking-widest font-black ${String(item.active) !== 'false' ? 'text-zinc-400 hover:text-white' : 'text-acid-green hover:brightness-110'} transition-all">
+                            ${String(item.active) !== 'false' ? '[ Desativar ]' : '[ Ativar ]'}
+                        </button>
                     </div>
                 </div>
             `;
-            container.appendChild(div);
+            container.appendChild(card);
         });
 
         updateItemCount();
     }
 
-    // ─── HELPERS ──────────────────────────────────────────
-    function updateData(index, field, value) { 
-        playlistData[index][field] = value; 
-        // Atualiza em tempo real o nome no cabeçalho encolhido
-        if (field === 'name') {
-            const headerEl = document.getElementById(`header-name-${index}`);
-            if (headerEl) headerEl.innerText = `🎬 ${value || 'Nova Mídia'}`;
-        }
-    }
-
-    function toggleItem(index) {
-        playlistData[index]._expanded = !playlistData[index]._expanded;
-        const content = document.getElementById(`content-${index}`);
-        const icon = document.getElementById(`icon-${index}`);
-        content.classList.toggle('hidden');
-        icon.classList.toggle('rotate-180');
-    }
-
-    function addEmptyItem() {
-        // Adiciona um novo item no início da lista (unshift) já expandido por padrão (_expanded: true)
-        playlistData.unshift({ name: "Nova Mídia", type: "image", url: "", duration: "00:00:30", startDate: "", endDate: "", active: true, _expanded: true });
+    function toggleCollapse(index) {
+        playlistData[index]._collapsed = !playlistData[index]._collapsed;
         renderPlaylist();
     }
 
-    function removeItem(index) {
-        if (confirm("Tem certeza que deseja remover este item?")) {
+    // ─── 3. DATA ACTIONS ──────────────────────────────────
+    function updateData(index, field, value) { 
+        playlistData[index][field] = value; 
+    }
+
+    function toggleActive(index) {
+        playlistData[index].active = String(playlistData[index].active) === 'false';
+        renderPlaylist();
+    }
+
+    function removeItemWrapper(index) {
+        removeItem(index);
+    }
+
+    async function removeItem(index) {
+        if (confirm("REMOVER ITEM #" + (index+1) + " DA PLAYLIST?")) {
             playlistData.splice(index, 1);
             renderPlaylist();
+            showToast("Item Removido Localmente", "info");
+            
+            // Auto-save triggered by deletion
+            await saveToGitHub();
         }
     }
 
-    // ─── 3. SALVAR NO GITHUB ──────────────────────────────
+    // ─── 4. PUSH TO GITHUB ────────────────────────────────
     async function saveToGitHub() {
         const owner    = document.getElementById('gh-owner').value.trim();
         const repo     = document.getElementById('gh-repo').value.trim();
         const token    = document.getElementById('gh-token').value.trim();
 
-        if (!token)    { alert("Você precisa informar o GitHub Token (PAT) para salvar alterações!"); return; }
-        if (!fileSha)  { alert("Você precisa Carregar a Playlist atual antes de salvar!"); return; }
+        if (!token)    { showToast("Token PAT Necessário", "error"); openSettings(); return; }
+        if (!fileSha)  { showToast("Sincronize Primeiro", "error"); return; }
 
-        showToast("Enviando atualizações para o GitHub...", "info");
+        showToast("Publicando Alterações...", "info");
 
-        const url           = `https://api.github.com/repos/${owner}/${repo}/contents/playlist.json`;
+        const url = `https://api.github.com/repos/${owner}/${repo}/contents/playlist.json`;
         
-        // Remove a propriedade temporária _expanded antes de salvar no JSON do GitHub
-        const cleanData = playlistData.map(({ _expanded, ...rest }) => rest);
-        const newJsonString = JSON.stringify(cleanData, null, 2);
-        
-        const base64Content = utf8_to_b64(newJsonString);
+        // Limpeza de metadados internos (iniciados com _)
+        const cleanData = playlistData.map(item => {
+            const newItem = { ...item };
+            Object.keys(newItem).forEach(key => {
+                if (key.startsWith('_')) delete newItem[key];
+            });
+            return newItem;
+        });
+        const base64Content = utf8_to_b64(JSON.stringify(cleanData, null, 2));
 
         const bodyData = {
-            message: "Atualização da Playlist via Painel",
+            message: "⚡ UPDATE: Playlist via Painel Pro",
             content: base64Content,
             sha: fileSha
         };
@@ -484,16 +692,16 @@
 
             if (!res.ok) {
                 const errData = await res.json();
-                throw new Error(errData.message || "Erro desconhecido");
+                throw new Error(errData.message || "Erro de API");
             }
 
             const result = await res.json();
-            fileSha = result.content.sha; // Atualiza SHA para salvar novamente sem recarregar
+            fileSha = result.content.sha;
 
-            showToast("Sucesso! A Tela Digital atualizará em minutos.", "success");
+            showToast("Alterações Publicadas", "success");
         } catch (err) {
             console.error(err);
-            showToast("Falha ao salvar: " + err.message, "error");
+            showToast("Falha na Publicação: " + err.message, "error");
         }
     }
 </script>
