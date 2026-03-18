@@ -6,25 +6,7 @@
     "duration": "00:01:15",
     "startDate": "",
     "endDate": "",
-    "active": true
-  },
-  {
-    "name": "vacinas",
-    "type": "image",
-    "url": "https://drive.google.com/file/d/1Ofnkhw7kHOElHGT36KGhHSDbQmJbFy87/view?usp=sharing",
-    "duration": "00:01:15",
-    "startDate": "",
-    "endDate": "",
-    "active": true
-  },
-  {
-    "name": "alegria",
-    "type": "video",
-    "url": "https://youtu.be/bnpcNsPKWIQ",
-    "duration": "00:01:15",
-    "startDate": "",
-    "endDate": "",
-    "active": true
+    "active": false
   },
   {
     "name": "cidade limpa",
