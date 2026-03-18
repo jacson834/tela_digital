@@ -2,7 +2,8 @@
 <html lang="pt-br">
 <head>
 <meta charset="UTF-8">
-<title>TV Corporativa</title>
+<title>Tela Digital</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%234F46E5'%3E%3Cpath d='M21 3H3c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h5v2h8v-2h5c1.1 0 1.99-.9 1.99-2L23 5c0-1.1-.9-2-2-2zm0 14H3V5h18v12zm-5-6l-7 4V7z'/%3E%3C/svg%3E" type="image/svg+xml">
 
 <style>
 body {
@@ -35,45 +36,44 @@ img, video, iframe {
 
 <script>
 
-const API_URL = "playlist.json";
+var API_URL = "playlist.json";
 
-let playlist = [];
-let current = 0;
-let timerId = null;
+var playlist = [];
+var current = 0;
+var timerId = null;
 
 // 🔄 Atualiza a cada 10 minutos
-setInterval(loadData, 10 * 60 * 1000);
+setInterval(function() { loadData(); }, 10 * 60 * 1000);
 
 // ⏱️ Converter tempo
 function parseTime(time) {
     if (!time) return 10000;
 
-    const parts = time.split(":");
-    return (parseInt(parts[0]) * 3600 +
-            parseInt(parts[1]) * 60 +
-            parseInt(parts[2])) * 1000;
+    var parts = time.split(":");
+    return (parseInt(parts[0], 10) * 3600 +
+            parseInt(parts[1], 10) * 60 +
+            parseInt(parts[2], 10)) * 1000;
 }
 
 // 📅 Validar período de exibição (startDate e endDate)
 function isDateValid(startStr, endStr) {
-    const now = Date.now();
+    var now = new Date().getTime();
 
     // Subfunção para transformar o texto da planilha em uma Data real no código
     function parseDate(str, isEnd) {
         if (!str) return null; // Se estiver em branco, ignora o limite
-        const parts = String(str).trim().split(" ");
+        var parts = String(str).trim().split(" ");
         
-        // Formato BR (DD/MM/YYYY ou DD/MM/YYYY HH:MM)
-        if (parts[0].includes("/")) {
-            const d = parts[0].split("/");
+        if (parts[0].indexOf("/") !== -1) {
+            var d = parts[0].split("/");
             if (d.length === 3) {
-                const day = parseInt(d[0], 10);
-                const month = parseInt(d[1], 10) - 1; // Mês no JS começa no 0
-                const year = d[2].length === 2 ? 2000 + parseInt(d[2], 10) : parseInt(d[2], 10);
+                var day = parseInt(d[0], 10);
+                var month = parseInt(d[1], 10) - 1; // Mês no JS começa no 0
+                var year = d[2].length === 2 ? 2000 + parseInt(d[2], 10) : parseInt(d[2], 10);
                 
-                let h = 0, m = 0, s = 0;
+                var h = 0, m = 0, s = 0;
                 if (parts[1]) {
-                    const t = parts[1].split(":");
+                    var t = parts[1].split(":");
                     h = parseInt(t[0], 10) || 0; m = parseInt(t[1], 10) || 0; s = parseInt(t[2], 10) || 0;
                 } else if (isEnd) {
                     h = 23; m = 59; s = 59; // Se for o dia final sem horário, estende até o último segundo
@@ -82,12 +82,12 @@ function isDateValid(startStr, endStr) {
             }
         }
         // Formato Padrão ISO (YYYY-MM-DD)
-        const fallback = new Date(str).getTime();
+        var fallback = new Date(str).getTime();
         return isNaN(fallback) ? null : fallback;
     }
 
-    const startDate = parseDate(startStr, false);
-    const endDate = parseDate(endStr, true);
+    var startDate = parseDate(startStr, false);
+    var endDate = parseDate(endStr, true);
 
     if (startDate && now < startDate) return false; // Ainda não chegou a hora
     if (endDate && now > endDate) return false;     // Já passou da validade
@@ -97,15 +97,15 @@ function isDateValid(startStr, endStr) {
 
 //  Converter Google Drive
 function convertDrive(url, type) {
-    if (url.includes("drive.google.com")) {
-        const id = url.match(/\/d\/(.*?)\//) || url.match(/id=(.*?)&/) || url.match(/id=([^&]*)/);
+    if (url.indexOf("drive.google.com") !== -1) {
+        var id = url.match(/\/d\/(.*?)\//) || url.match(/id=(.*?)&/) || url.match(/id=([^&]*)/);
         if (id && id[1]) {
             if (type === "image") {
                 // Usa o endpoint de thumbnail para evitar bloqueio de OpaqueResponse/CORS em imagens do Drive
-                return `https://drive.google.com/thumbnail?id=${id[1]}&sz=w1920-h1080`;
+                return "https://drive.google.com/thumbnail?id=" + id[1] + "&sz=w1920-h1080";
             }
             // Para vídeos, o Drive bloqueia stream direto. Retorna a página oficial de preview para uso no Iframe.
-            return `https://drive.google.com/file/d/${id[1]}/preview`;
+            return "https://drive.google.com/file/d/" + id[1] + "/preview";
         }
     }
     return url;
@@ -113,13 +113,13 @@ function convertDrive(url, type) {
 
 // ▶️ Detectar YouTube
 function isYoutube(url) {
-    return url.includes("youtube") || url.includes("youtu.be");
+    return url.indexOf("youtube") !== -1 || url.indexOf("youtu.be") !== -1;
 }
 
 function youtubeEmbed(url) {
-    let id;
+    var id;
 
-    if (url.includes("v=")) {
+    if (url.indexOf("v=") !== -1) {
         id = url.split("v=")[1].split("&")[0];
     } else {
         id = url.split("/").pop().split("?")[0];
@@ -127,23 +127,29 @@ function youtubeEmbed(url) {
 
     // Parâmetros extras para deixar o player invisível e livre de poluição visual.
     // cc_load_policy=1 e hl=pt-br ativam as legendas do YouTube em português.
-    return `https://www.youtube.com/embed/${id}?autoplay=1&mute=1&controls=0&showinfo=0&rel=0&loop=1&playlist=${id}&modestbranding=1&iv_load_policy=3&disablekb=1&cc_load_policy=1&hl=pt-br`;
+    return "https://www.youtube.com/embed/" + id + "?autoplay=1&mute=1&controls=0&showinfo=0&rel=0&loop=1&playlist=" + id + "&modestbranding=1&iv_load_policy=3&disablekb=1&cc_load_policy=1&hl=pt-br";
 }
 
 // 📥 Carregar dados do arquivo JSON local
-async function loadData() {
-    try {
-        // O parâmetro ?t=... evita que o navegador guarde uma versão velha (cache) do arquivo
-        const res = await fetch(API_URL + "?t=" + new Date().getTime());
-
-        if (!res.ok) throw new Error("Erro ao carregar playlist.json");
-
-        const data = await res.json();
-        processData(data);
-
-    } catch (err) {
-        console.error("❌ Erro total ao carregar dados:", err);
-    }
+function loadData(callback) {
+    var xhr = new XMLHttpRequest();
+    xhr.open("GET", API_URL + "?t=" + new Date().getTime(), true);
+    xhr.onreadystatechange = function () {
+        if (xhr.readyState === 4) {
+            if (xhr.status === 200) {
+                try {
+                    var data = JSON.parse(xhr.responseText);
+                    processData(data);
+                    if (callback) callback();
+                } catch (err) {
+                    console.error("Erro ao analisar JSON:", err);
+                }
+            } else {
+                console.error("Erro ao carregar dados. Status: " + xhr.status);
+            }
+        }
+    };
+    xhr.send();
 }
 
 // 🔄 Processar dados
@@ -151,30 +157,39 @@ function processData(data) {
     // Adicionado log dos dados brutos
     console.log("📊 Dados brutos extraídos do JSON:", data);
 
-    playlist = data
-        .filter(item => {
-            // 1. Checa a coluna 'active'
-            if (item.active !== undefined && item.active !== null && item.active !== "") {
-                const val = String(item.active).trim().toUpperCase();
-                // Só bloqueia a exibição se o usuário tiver marcado explicitamente como inativo
-                if (val === "FALSE" || val === "FALSO" || val === "NÃO" || val === "NAO" || val === "0") {
-                    return false;
-                }
-            }
+    var tempPlaylist = [];
+    for (var i = 0; i < data.length; i++) {
+        var item = data[i];
 
-            // 2. Checa o período (startDate e endDate)
-            if (!isDateValid(item.startDate || item.startdate, item.endDate || item.enddate)) {
-                return false; // Fora do período de exibição, exclui da playlist!
+        // 1. Checa a coluna 'active'
+        if (item.active !== undefined && item.active !== null && item.active !== "") {
+            var val = String(item.active).trim().toUpperCase();
+            if (val === "FALSE" || val === "FALSO" || val === "NÃO" || val === "NAO" || val === "0") {
+                continue;
             }
-            
-            return true;
-        })
-        .map(item => ({
+        }
+
+        // 2. Checa o período (startDate e endDate)
+        var startStr = item.startDate || item.startdate;
+        var endStr = item.endDate || item.enddate;
+        if (!isDateValid(startStr, endStr)) {
+            continue;
+        }
+
+        // 3. Checa url vazia
+        var urlStr = item.url ? String(item.url).trim() : "";
+        if (urlStr === "") {
+            continue;
+        }
+
+        tempPlaylist.push({
             type: item.type ? String(item.type).trim().toLowerCase() : "image",
-            url: item.url ? String(item.url).trim() : "",
+            url: urlStr,
             duration: parseTime(item.duration)
-        }))
-        .filter(item => item.url !== ""); // Segurança extra: só adiciona na playlist se tiver uma URL preenchida
+        });
+    }
+    
+    playlist = tempPlaylist;
 
     console.log("▶️ Playlist filtrada para tocar:", playlist);
 }
@@ -183,10 +198,10 @@ function processData(data) {
 function show(item) {
     if (timerId) clearTimeout(timerId);
 
-    const player = document.getElementById("player");
+    var player = document.getElementById("player");
     player.innerHTML = "";
 
-    let el;
+    var el;
 
     if (item.type === "image") {
         el = document.createElement("img");
@@ -205,7 +220,7 @@ function show(item) {
 
             timerId = setTimeout(next, item.duration);
 
-        } else if (item.url.includes("drive.google.com")) {
+        } else if (item.url.indexOf("drive.google.com") !== -1) {
             // ⚠️ O Google bloqueia tag <video> do Drive. A única forma é via Iframe (player nativo)
             el = document.createElement("iframe");
             el.src = convertDrive(item.url, item.type);
@@ -222,7 +237,7 @@ function show(item) {
             el.onended = next;
 
             // 🛡️ Proteção contra tela preta: se o Google Drive bloquear, pula em 3s
-            el.onerror = () => {
+            el.onerror = function() {
                 console.warn("⚠️ Falha ao carregar vídeo (bloqueado pelo Drive). Pulando...");
                 if (timerId) clearTimeout(timerId);
                 timerId = setTimeout(next, 3000);
@@ -249,17 +264,17 @@ function next() {
 }
 
 //  Inicialização
-async function startApp() {
+function startApp() {
     document.getElementById("player").innerHTML = "<h1 style='color:white'>Carregando...</h1>";
 
-    await loadData();
-
-    if (playlist.length > 0) {
-        show(playlist[0]);
-    } else {
-        document.getElementById("player").innerHTML = "<h1 style='color:white'>Sem conteúdo</h1>";
-        timerId = setTimeout(next, 10000);
-    }
+    loadData(function() {
+        if (playlist.length > 0) {
+            show(playlist[0]);
+        } else {
+            document.getElementById("player").innerHTML = "<h1 style='color:white'>Sem conteúdo</h1>";
+            timerId = setTimeout(next, 10000);
+        }
+    });
 }
 
 // 🎬 Iniciar automaticamente ao abrir a página
